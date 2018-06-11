@@ -19,21 +19,21 @@ $ExistingDC = ((Get-WmiObject -Class Win32_ComputerSystem).PartOfDomain)
 If ($ExistingDC -eq $False) {
     Write-Verbose '---Renaming computer and joining to the domain.'
 
-# If Computer Is Not On A Domain
-# Get New Computer Name
+#If Computer Is Not On A Domain
+#Get New Computer Name
 $CompName = Read-Host -Prompt "Input New Computer Name"
 
-# Get Domain Name
+#Get Domain Name
 $FullDC = Read-Host -Prompt "Input Full Domain Name: RSC.LOCAL/GC.LOCAL"
 $ShortDC = Read-Host -Prompt "Input Short Domain Name: RSC/GC"
 
-# Get Network Admin Credentials
+#Get Network Admin Credentials
 $NTCred = Get-Credential -Credential "NTAdmin"
 
-# Add Computer To Proper OU
+#Add Computer To Proper OU
 Add-Computer -DomainName $FullDC -Credential $NTCred -OUPath "OU=Workstations,OU=$ShortDC Computers,DC=$ShortDC,DC=local"
 
-# Rename Computer With Network Admin Credentials
+#Rename Computer With Network Admin Credentials
 $Computer = Get-WmiObject Win32_ComputerSystem
 $r = $Computer.Rename($CompName, $NTCred.GetNetworkCredential().Password, $NTCred.Username)
 
